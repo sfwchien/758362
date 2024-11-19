@@ -1,0 +1,22 @@
+const axios = require("axios");
+const cheerio = require("cheerio");
+
+module.exports = async(req, res) => {
+    try {
+        const url = "https://www.chotot.com/mua-ban-dien-thoai";
+        const { data } = await axios.get(url);
+        const $ = cheerio.load(data);
+
+        const images = [];
+        $("img").each((_, img) => {
+            const src = $(img).attr("src");
+            if (src && src.startsWith("http")) {
+                images.push(src);
+            }
+        });
+
+        res.status(200).json(images);
+    } catch (error) {
+        res.status(500).send("Error fetching images");
+    }
+};
